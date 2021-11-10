@@ -12,17 +12,25 @@ mnist = tf.keras.datasets.mnist
 x_train = tf.keras.utils.normalize(x_train, axis = 1)
 x_test = tf.keras.utils.normalize(x_test, axis = 1)
 
-model = tf.keras.models.Sequential()
 
+model = tf.keras.models.Sequential()
 model.add(tf.keras.layers.Flatten(input_shape=(28,28)))
-model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.relu))
 model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.relu))
 model.add(tf.keras.layers.Dense(units=10, activation=tf.nn.softmax))
 
 
-model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+opt = tf.keras.optimizers.SGD(learning_rate=0.1)
 
-model.fit(x_train, y_train, epochs=5)
+model.compile(optimizer=opt, loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+'''
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(0.001),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
+)
+'''
+
+model.fit(x_train, y_train, epochs=20)
 
 accuracy, loss = model.evaluate(x_test, y_test)
 
@@ -31,7 +39,7 @@ print(loss)
 
 # model.save('digits.model')
 
-tfjs.converters.save_keras_model(model, 'digits.jsmodel')
+tfjs.converters.save_keras_model(model, 'models/sgd01.128x20e')
 
 
 # window = Tk()
